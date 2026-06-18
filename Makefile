@@ -4,6 +4,3 @@ format:
 
 lint:
 	ruff check .
-
-hooks:
-	pre-commit run --all-files

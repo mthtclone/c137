@@ -17,6 +17,10 @@ and
 
 `black .`
 
+and 
+
+`pre-commit run --all-files`
+
 ---
 
 The workspace has makefile and you need to make sure you have installed `make` on your system.
@@ -40,7 +44,6 @@ These are the available Make commands:
 make run      # start the game (not applicable yet)
 make lint     # run ruff checks
 make format   # run black formatter
-make hooks    # run pre-commit on all files
 ```
 
 ---
