@@ -1,2 +1,3 @@
-Joze-Max
-Bakashinshin
+Joze-Max. 
+Bakashinshin. 
+Zynnsobased. 
