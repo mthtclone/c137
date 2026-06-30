@@ -1,30 +1,57 @@
 from direct.showbase.ShowBase import ShowBase
-from direct.task import Task
+
+# from direct.task import Task
+from ui.menus.main_menu import MainMenu
+
+# from direct.gui.DirectGui import DirectButton
 
 
-class Prototype(ShowBase):
+class GameApp(ShowBase):
     def __init__(self):
         super().__init__()
 
-        # Load a built-in Panda3D model
-        self.model = self.loader.loadModel("models/environment")
-        self.model.reparentTo(self.render)
-        self.model.setScale(0.1)
-        self.model.setPos(-8, 42, 0)
+        # self.taskMgr.add(self.debug_mouse, "debug_mouse")
 
-        # Camera position
-        self.camera.setPos(0, -20, 5)
-        self.camera.lookAt(0, 0, 0)
+        self.disableMouse()  # This is for camera control
 
-        # Rotate the world
-        self.taskMgr.add(self.spin_world, "spin_world")
+        self.menu = MainMenu(
+            render2d=self.aspect2d,
+            on_new_game=self.on_new_game,
+            on_continue=self.on_continue,
+            on_exit=self.on_exit,
+        )
 
-    def spin_world(self, task):
-        self.model.setH(task.time * 10)
-        return Task.cont
+        self.menu.show()
+
+        # self.test_btn = DirectButton(
+        #     text="TEST",
+        #     scale=0.1,
+        #     pos=(0, 0, 0),
+        #     command=lambda: print("DIRECT BUTTON WORKS")
+        # )
+
+    def on_new_game(self):
+        print("New Game clicked")
+
+    def on_continue(self):
+        print("Continue clicked")
+
+    def on_options(self):
+        print("Options clicked")
+
+    def on_exit(self):
+        print("Exit clicked")
+
+        if self.menu:
+            self.menu.destroy()
+
+        self.userExit()
+
+    # def debug_mouse(self, task):
+    #     print(self.mouseWatcherNode.hasMouse())
+    #     return Task.cont
 
 
-app = Prototype()
-app.run()
-
-## The above code is just mere sample.
+if __name__ == "__main__":
+    app = GameApp()
+    app.run()
