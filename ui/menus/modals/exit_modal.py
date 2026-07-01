@@ -2,6 +2,7 @@ from direct.gui.DirectGui import DirectFrame
 
 from ui.menus.modals.base_modal import BaseModal
 from ui.widgets.button import Button
+from ui.widgets.label import Label
 
 
 class ExitModal(BaseModal):
@@ -20,10 +21,9 @@ class ExitModal(BaseModal):
 
         self.widgets.append(self.overlay)
 
-        title = Button(
+        title = Label(
             parent=self.parent,
             text="Exit Game?",
-            command=None,
             pos=(0, 0, 0.3),
             scale=0.09,
         )
