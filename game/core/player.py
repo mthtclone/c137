@@ -14,22 +14,21 @@ class Player:
         camera.reparentTo(node)
         camera.setPos(0, 0, 1.7)
 
-    # ---------------- MOVE ----------------
     def move(self, x, y, speed, dt):
 
-        direction = Vec3(x, y, 0)
+        forward = self.node.getQuat().getForward()
+        right = self.node.getQuat().getRight()
 
-        if direction.length() > 0:
+        direction = forward * y + right * x
+
+        if direction.lengthSquared() > 0:
             direction.normalize()
-
-        direction = self.node.getQuat().xform(direction)
 
         self.node.setPos(self.node.getPos() + direction * speed * dt)
 
-    # ---------------- LOOK ----------------
     def look(self, dx, dy):
 
-        sensitivity = 0.05
+        sensitivity = 0.08
 
         self.node.setH(self.node.getH() - dx * sensitivity)
 
@@ -38,18 +37,15 @@ class Player:
 
         self.camera.setP(self.pitch)
 
-    # ---------------- CROUCH (SMOOTH TOGGLE STATE) ----------------
+    # ---------------- CROUCH ----------------
     def crouch(self, value):
 
         self.is_crouching = value
 
         target_z = 1.0 if value else 1.7
-
         current_z = self.camera.getZ()
 
-        self.camera.setZ(
-            current_z + (target_z - current_z) * 0.25
-        )
+        self.camera.setZ(current_z + (target_z - current_z) * 0.25)
 
     # ---------------- INTERACT ----------------
     def interact(self):

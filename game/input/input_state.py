@@ -6,10 +6,11 @@ class InputState:
         self.backward = False
         self.left = False
         self.right = False
-        self.sprint = False
+
+        self.shift = False
 
         self.crouch = False
-        self.crouch_pressed = False  
+        self.crouch_pressed = False
 
         self.interact = False
 
