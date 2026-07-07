@@ -13,6 +13,7 @@ class InputState:
         self.crouch_pressed = False
 
         self.interact = False
+        self.interact_x = False
 
         self.look_x = 0.0
         self.look_y = 0.0

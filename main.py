@@ -1,9 +1,12 @@
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
+
+from game.controller.player_controller import PlayerController
+from game.core.interaction_manager import InteractionManager
+from game.core.player import Player
 from game.input.input_state import InputState
 from game.input.keyboard_input import KeyboardInput
-from game.controller.player_controller import PlayerController
-from game.core.player import Player
+
 
 class Prototype(ShowBase):
 
@@ -25,7 +28,8 @@ class Prototype(ShowBase):
 
         # PLAYER
         player_node = self.render.attachNewNode("Player")
-        self.player = Player(player_node, self.camera)
+        self.interaction_manager = InteractionManager(self, self.camera)
+        self.player = Player(player_node, self.camera, self.interaction_manager)
 
         # UPDATE LOOP
         self.taskMgr.add(self.update, "update")
@@ -41,6 +45,8 @@ class Prototype(ShowBase):
 
         for cmd in commands:
             cmd.execute(self.player, dt)
+
+        self.interaction_manager.update()
 
         self.state.reset()
 

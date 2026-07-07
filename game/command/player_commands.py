@@ -35,5 +35,8 @@ class CrouchCommand(Command):
 
 class InteractCommand(Command):
 
+    def __init__(self, interaction_key="E"):
+        self.interaction_key = interaction_key
+
     def execute(self, player, dt):
-        player.interact()
+        player.interact(self.interaction_key)

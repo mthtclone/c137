@@ -3,10 +3,12 @@ from panda3d.core import Vec3
 
 class Player:
 
-    def __init__(self, node, camera):
+    def __init__(self, node, camera, interaction_manager=None):
 
         self.node = node
         self.camera = camera
+        self.interaction_manager = interaction_manager
+        self.held_pickable = None
 
         self.pitch = 0
         self.is_crouching = False
@@ -48,5 +50,6 @@ class Player:
         self.camera.setZ(current_z + (target_z - current_z) * 0.25)
 
     # ---------------- INTERACT ----------------
-    def interact(self):
-        print("Interact Triggered")
+    def interact(self, interaction_key="E"):
+        if self.interaction_manager:
+            self.interaction_manager.try_interact(self, interaction_key)

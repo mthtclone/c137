@@ -1,8 +1,8 @@
 from game.command.player_commands import (
-    MoveCommand,
-    LookCommand,
     CrouchCommand,
-    InteractCommand
+    InteractCommand,
+    LookCommand,
+    MoveCommand,
 )
 
 
@@ -52,9 +52,12 @@ class PlayerController:
 
         commands.append(CrouchCommand(self.state.crouch))
 
-
         if self.state.interact:
-            commands.append(InteractCommand())
+            commands.append(InteractCommand("E"))
             self.state.interact = False
+
+        if self.state.interact_x:
+            commands.append(InteractCommand("X"))
+            self.state.interact_x = False
 
         return commands

@@ -19,6 +19,7 @@ class KeyboardInput(DirectObject):
         # actions
         self.accept("c", self.toggle_crouch)
         self.accept("e", self.set_interact)
+        self.accept("x", self.set_interact_x)
         self.accept("escape", self.exit_game)
 
         # mouse center
@@ -52,6 +53,9 @@ class KeyboardInput(DirectObject):
 
     def set_interact(self):
         self.state.interact = True
+
+    def set_interact_x(self):
+        self.state.interact_x = True
 
     def toggle_crouch(self):
         self.state.crouch_pressed = True
