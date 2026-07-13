@@ -1,0 +1,47 @@
+{
+    "level": {
+        "name": "Test Level",
+        "version": 1
+    },
+
+    "surface_types": {
+        "grass": {
+            "footstep_sound": "grass",
+            "footstep_volume": 0.6
+        },
+
+        "wood": {
+            "footstep_sound": "wood",
+            "footstep_volume": 0.8
+        }
+    },
+
+    "object_types": {
+        "door": {
+            "interactive": true,
+            "interaction": "open"
+        }
+    },
+
+    "objects": {
+        "old_door_01": {
+            "type": "door",
+            "locked": false
+        },
+
+        "tree_01": {
+            "type": "environment",
+            "tags": [
+                "tree",
+                "nature"
+            ]
+        }
+    },
+
+    "zones": {
+        "forest": {
+            "ambient_sound": "forest_wind",
+            "reverb": "outdoor"
+        }
+    }
+}
