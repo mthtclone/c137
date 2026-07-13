@@ -6,6 +6,7 @@ target-version = ["py311"]
 line-length = 88
 target-version = "py311"
 
+[tool.ruff.lint]
 # E - pycodestyle errors
 # F - Pyflakes errors
 # I - import sorting
