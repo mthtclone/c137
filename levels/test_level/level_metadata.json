@@ -4,6 +4,17 @@
         "version": 1
     },
 
+    "collision": {
+        "mask": 1,
+        "node_prefix": "COL_",
+        "debug": false,
+        "fallback": {
+            "type": "box",
+            "center": [0, 0, -1],
+            "half_extents": [40, 40, 0.2]
+        }
+    },
+
     "surface_types": {
         "grass": {
             "footstep_sound": "grass",
