@@ -39,6 +39,10 @@ class MetadataManager:
     def get_level(self):
         return self._metadata.get("level", {})
 
+    def get_collision(self):
+        """Return the collision settings for the currently loaded level."""
+        return self._metadata.get("collision", {})
+
     def get_surface(self, surface_name):
         return self._metadata.get("surface_types", {}).get(surface_name)
 
