@@ -1,23 +1,15 @@
-from panda3d.core import AudioSound
-
-
 class AudioManager:
-
     def __init__(self, base):
-
         self.base = base
 
-        self.grass_step = self.base.loader.loadSfx(
-            "game/assets/on_grass.wav"
-        )
-
-        self.grass_step.setVolume(0.5)
+        self.sounds = {"grass": self.base.loader.loadSfx("game/assets/on_grass.wav")}
 
     def play_footstep(self, surface):
+        sound = self.sounds.get(surface)
 
-        if surface != "grass":
+        if sound is None:
             return
 
-        # Restart sound if it's already playing
-        self.grass_step.stop()
-        self.grass_step.play()
+        sound.stop()
+
+        sound.play()

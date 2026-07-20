@@ -43,8 +43,20 @@ class MetadataManager:
         """Return the collision settings for the currently loaded level."""
         return self._metadata.get("collision", {})
 
+    def get_spawn(self):
+        """Return player spawn settings for the currently loaded level."""
+        return self._metadata.get("spawn", {})
+
     def get_surface(self, surface_name):
         return self._metadata.get("surface_types", {}).get(surface_name)
+
+    def get_collision_surface(self, collision_name):
+        """Convert collision object name into surface type"""
+        return (
+            self._metadata.get("collision_surfaces", {})
+            .get(collision_name, {})
+            .get("surface")
+        )
 
     def get_object(self, object_name):
         return self._metadata.get("objects", {}).get(object_name)

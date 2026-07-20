@@ -9,6 +9,7 @@ from panda3d.core import (
     GeomVertexReader,
     Point3,
     TextNode,
+    Vec3,
 )
 
 from engine.managers.metadata_manager import MetadataManager
@@ -129,6 +130,10 @@ class LevelManager:
     def get_spawn_point(self):
         return self.spawn_point
 
+    def get_spawn_offset(self):
+        offset = self.metadata.get_spawn().get("offset", [0, 0, 1])
+        return Vec3(*offset)
+
     def unload_level(self):
         if self.collision_root:
             self.collision_root.removeNode()
@@ -192,6 +197,8 @@ class LevelManager:
             return False
 
         triangle_count = 0
+        geometry_source_count = 0
+        debug_collision = self.metadata.get_collision().get("debug", False)
         seen_geom_nodes = set()
         for collision_mesh in collision_meshes:
             # A COL_ object can be either a GeomNode itself or a parent that
@@ -200,9 +207,16 @@ class LevelManager:
             if isinstance(collision_mesh.node(), GeomNode):
                 geom_paths.addPath(collision_mesh)
 
-            collision_mesh.hide()
+            if debug_collision:
+                collision_mesh.show()
+                collision_mesh.setColor(1, 0, 0, 1)
+                collision_mesh.setRenderModeWireframe()
+                collision_mesh.setTwoSided(True)
+            else:
+                collision_mesh.hide()
 
             for geom_path in geom_paths:
+                geometry_source_count += 1
                 geom_node = geom_path.node()
                 node_id = id(geom_node)
                 if node_id in seen_geom_nodes:
@@ -228,7 +242,7 @@ class LevelManager:
                             collision_node.addSolid(CollisionPolygon(*points))
                             triangle_count += 1
 
-                if self.metadata.get_collision().get("debug", False):
+                if debug_collision:
                     collider.show()
                 else:
                     collider.hide()
@@ -237,6 +251,11 @@ class LevelManager:
             print(
                 f"[LevelManager] Loaded {triangle_count} collision triangles "
                 f"from {collision_meshes.getNumPaths()} COL_ node(s)."
+            )
+        elif geometry_source_count == 0:
+            print(
+                "[LevelManager] COL_ nodes were found, but they contain no "
+                "exported mesh geometry."
             )
 
         return triangle_count > 0

@@ -1,10 +1,8 @@
 from direct.showbase.DirectObject import DirectObject
-from panda3d.core import WindowProperties
-from panda3d.core import KeyboardButton
+from panda3d.core import KeyboardButton, WindowProperties
 
 
 class KeyboardInput(DirectObject):
-
     def __init__(self, base, state):
         super().__init__()
 
@@ -30,17 +28,12 @@ class KeyboardInput(DirectObject):
 
     # ---------------- REAL-TIME KEY CHECK ----------------
     def is_down(self, key):
-        return self.base.mouseWatcherNode.is_button_down(
-            KeyboardButton.ascii_key(key)
-        )
+        return self.base.mouseWatcherNode.is_button_down(KeyboardButton.ascii_key(key))
 
     def is_shift_down(self):
-        return self.base.mouseWatcherNode.is_button_down(
-            KeyboardButton.shift()
-        )
+        return self.base.mouseWatcherNode.is_button_down(KeyboardButton.shift())
 
     def update_keys(self):
-
         # movement (ORDER DOES NOT MATTER ANYMORE)
         self.state.forward = self.is_down("w")
         self.state.backward = self.is_down("s")
@@ -59,11 +52,8 @@ class KeyboardInput(DirectObject):
     def exit_game(self):
         self.base.userExit()
 
-
     def mouse_task(self, task):
-
         if self.base.mouseWatcherNode.hasMouse():
-
             pointer = self.base.win.getPointer(0)
 
             dx = pointer.getX() - self.center_x
