@@ -4,55 +4,58 @@
         "version": 1
     },
 
+    "spawn": {
+        "offset": [0, 0, 0]
+    },
+
     "collision": {
         "mask": 1,
         "node_prefix": "COL_",
-        "debug": false,
-        "fallback": {
-            "type": "box",
-            "center": [0, 0, -1],
-            "half_extents": [40, 40, 0.2]
-        }
+        "debug": true,
+        "player_physics": true
     },
 
+
+    "collision_surfaces": {
+
+        "COL_Plane1": {
+            "surface": "grass"
+        },
+
+        "COL_Road": {
+            "surface": "stone"
+        },
+
+        "COL_Car5": {
+            "surface": "metal"
+        }
+
+    },
+
+
     "surface_types": {
+
         "grass": {
             "footstep_sound": "grass",
             "footstep_volume": 0.6
         },
 
-        "wood": {
-            "footstep_sound": "wood",
+        "stone": {
+            "footstep_sound": "stone",
             "footstep_volume": 0.8
-        }
-    },
-
-    "object_types": {
-        "door": {
-            "interactive": true,
-            "interaction": "open"
-        }
-    },
-
-    "objects": {
-        "old_door_01": {
-            "type": "door",
-            "locked": false
         },
 
-        "tree_01": {
-            "type": "environment",
-            "tags": [
-                "tree",
-                "nature"
-            ]
+        "metal": {
+            "footstep_sound": "metal",
+            "footstep_volume": 1.0
         }
+
     },
 
-    "zones": {
-        "forest": {
-            "ambient_sound": "forest_wind",
-            "reverb": "outdoor"
-        }
-    }
+
+    "object_types": {},
+
+    "objects": {},
+
+    "zones": {}
 }

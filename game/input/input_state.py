@@ -1,7 +1,5 @@
 class InputState:
-
     def __init__(self):
-
         self.forward = False
         self.backward = False
         self.left = False
