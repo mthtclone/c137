@@ -1,6 +1,7 @@
 /.ruff_cache
 /venv
 *.ini
-/assets/blender/*.blender
+/assets/blender/*.blend
+build
 
 __pycache__/
