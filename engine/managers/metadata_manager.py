@@ -79,6 +79,9 @@ class MetadataManager:
 
         return self.get_object(object_id)
 
+    def get_asset(self, asset_name):
+        return self._metadata.get("assets", {}).get(asset_name)
+
     @property
     def data(self):
         return self._metadata

@@ -10,7 +10,7 @@ class Player:
         self.pitch = 0
         self.is_crouching = False
 
-        self.eye_height = 1.0
+        self.eye_height = 0.3
         self.gravity = 25.0
         self.terminal_velocity = 55.0
         self.vertical_velocity = 0.0
