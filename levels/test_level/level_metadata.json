@@ -52,6 +52,12 @@
 
     },
 
+    "assets": {
+        "tree_oak": {
+            "path": "assets/models/environment/tree_oak.glb",
+            "scale": [0.05, 0.05, 0.05]
+        }
+    },
 
     "object_types": {},
 

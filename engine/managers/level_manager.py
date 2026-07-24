@@ -27,6 +27,9 @@ class LevelManager:
         self.spawn_point = None
         self.collision_root = None
 
+        self.loaded_assets = {}
+        self.instance_root = None
+
     def load_level(self, level_folder):
         level_folder = Path(level_folder)
 
@@ -64,7 +67,9 @@ class LevelManager:
             # Panda3D's MINGW build does not resolve Windows-style absolute
             # paths (``C:\\...``) through its virtual file system.  Keep this
             # project-relative path and use forward slashes on every platform.
-            self.current_level = self.base.loader.loadModel(model_file.as_posix())
+            self.current_level = self.base.loader.loadModel(
+                model_file.as_posix(), noCache=True
+            )
 
             self.current_level.reparentTo(self.base.render)
 
@@ -82,6 +87,7 @@ class LevelManager:
         self.current_level_path = level_folder
 
         self.load_collision(level_folder)
+        self.load_instances(level_folder)
 
         #
         # Level information
@@ -272,3 +278,127 @@ class LevelManager:
         collision_node.addSolid(CollisionBox(center, *half_extents))
         collision_node.setIntoCollideMask(mask)
         self.collision_root.attachNewNode(collision_node)
+
+    def load_instances(self, level_folder):
+        print("[Level Manager] Searching for instances...")
+
+        self.instance_root = self.base.render.attachNewNode("LevelInstances")
+
+        all_nodes = self.current_level.findAllMatches("**")
+
+        instances = []
+
+        for node in all_nodes:
+            if node.getName().startswith("INST_"):
+                instances.append(node)
+
+        if len(instances) == 0:
+            print("[LevelManager] No instances found.")
+
+        print(f"[Level Manager] Found {len(instances)} instances.")
+
+        for instance in instances:
+            self.create_instance(instance)
+
+    def create_instance(self, node):
+        node_name = node.getName()
+
+        #
+        # Remove Blender duplicate suffix
+        #
+        # INST_tree_oak.001
+        #
+        # becomes
+        #
+        # INST_tree_oak
+        #
+
+        clean_name = node_name.split(".")[0]
+
+        #
+        # Remove INST_ prefix
+        #
+
+        if not clean_name.startswith("INST_"):
+            return
+
+        asset_name = clean_name.replace("INST_", "", 1)
+
+        print(f"[LevelManager] Instance detected: {asset_name}")
+
+        asset = self.get_asset(asset_name)
+
+        # print(asset)
+        # print(asset.getBounds())
+
+        if asset is None:
+            print("[LevelManager] Missing asset:", asset_name)
+
+            return
+
+        #
+        # Create instance
+        #
+
+        asset.show()
+
+        instance = asset.copyTo(self.instance_root)
+
+        asset.hide()
+
+        # print(instance)
+        # print(instance.getScale())
+
+        #
+        # Apply Blender transform
+        #
+
+        instance.setPos(node.getPos(self.current_level))
+
+        instance.setHpr(node.getHpr(self.current_level))
+
+        asset_info = self.metadata.get_asset(asset_name)
+
+        scale = asset_info.get("scale", [1, 1, 1])
+
+        instance.setScale(*scale)
+
+        #
+        # Hide placeholder
+        #
+
+        node.hide()
+
+        print(f"[LevelManager] Spawned {asset_name}")
+        print(
+            "Spawn:",
+            asset_name,
+            node.getPos(self.current_level),
+            node.getScale(self.current_level),
+        )
+
+    def get_asset(self, asset_name):
+        if asset_name in self.loaded_assets:
+            return self.loaded_assets[asset_name]
+
+        asset_info = self.metadata.get_asset(asset_name)
+
+        if asset_info is None:
+            return None
+
+        path = asset_info["path"]
+
+        print("[LevelManager] Loading asset:", asset_name)
+
+        model = self.base.loader.loadModel(path, noCache=True)
+
+        model.reparentTo(self.base.render)
+
+        if model.isEmpty():
+            print(f"[LevelManager] Failed to load {path}")
+
+        model.hide()
+
+        self.loaded_assets[asset_name] = model
+
+        return model
