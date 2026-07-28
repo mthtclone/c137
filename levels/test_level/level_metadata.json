@@ -63,5 +63,30 @@
 
     "objects": {},
 
-    "zones": {}
+ "zones": {
+
+    "COL_Plane1": {
+
+        "type": "dialog",
+
+        "dialog": "DT0"
+
+    },
+
+
+    "COL_Plane2": {
+
+        "type": "dialog",
+
+        "dialog": "DT1"
+
+    }, 
+
+    "COL_Road": {
+        "type": "dialog",
+
+        "dialog": "DT2"
+    }
+
+ }
 }
