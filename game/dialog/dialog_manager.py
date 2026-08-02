@@ -6,7 +6,6 @@ class DialogManager:
     def __init__(self, ui):
 
         self.ui = ui
-
         self.current_dialog = None
 
         self.current_index = 0
@@ -85,3 +84,11 @@ class DialogManager:
         self.is_active = False
 
         self.ui.hide()
+
+            # ------------------------
+    # Check Dialog State
+    # ------------------------
+
+    def is_playing(self):
+
+        return self.is_active
