@@ -52,41 +52,57 @@
 
     },
 
+
     "assets": {
+
         "tree_oak": {
             "path": "assets/models/environment/tree_oak.glb",
             "scale": [0.05, 0.05, 0.05]
         }
+
     },
+
 
     "object_types": {},
 
+
     "objects": {},
 
- "zones": {
 
-    "COL_Plane1": {
+    "dialog": {
 
-        "type": "dialog",
-
-        "dialog": "DT0"
+        "enabled": true
 
     },
 
 
-    "COL_Plane2": {
+    "zones": {
 
-        "type": "dialog",
+        "COL_Plane1": {
 
-        "dialog": "DT1"
+            "type": "dialog",
 
-    }, 
+            "dialog": "DT0"
 
-    "COL_Road": {
-        "type": "dialog",
+        },
 
-        "dialog": "DT2"
+
+        "COL_Plane2": {
+
+            "type": "dialog",
+
+            "dialog": "DT1"
+
+        },
+
+
+        "COL_Road": {
+
+            "type": "dialog",
+
+            "dialog": "DT2"
+
+        }
+
     }
-
- }
 }

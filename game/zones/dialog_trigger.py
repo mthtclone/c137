@@ -1,15 +1,19 @@
 class DialogTrigger:
 
-
     def __init__(
         self,
         player,
-        dialog_manager
+        dialog_manager,
+        metadata
     ):
 
         self.player = player
 
         self.dialog_manager = dialog_manager
+
+        self.metadata = metadata
+
+
 
 
         self.triggered_planes = set()
