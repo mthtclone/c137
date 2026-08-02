@@ -5,3 +5,6 @@
 build
 main.py
 __pycache__/
+
+*.glb
+*.fbx
