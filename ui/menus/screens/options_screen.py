@@ -32,9 +32,7 @@ class OptionsScreen:
         # Audio
         # =========================
 
-        self.panel.add_group_title(
-            Label(parent=self.panel.content, text="Audio")
-        )
+        self.panel.add_group_title(Label(parent=self.panel.content, text="Audio"))
 
         self.panel.add_row(
             Label(parent=self.panel.content, text="Master Volume"),
@@ -58,9 +56,7 @@ class OptionsScreen:
         # Video
         # =========================
 
-        self.panel.add_group_title(
-            Label(parent=self.panel.content, text="Video")
-        )
+        self.panel.add_group_title(Label(parent=self.panel.content, text="Video"))
 
         self.panel.add_row(
             Label(parent=self.panel.content, text="Fullscreen"),
@@ -82,9 +78,7 @@ class OptionsScreen:
 
         # Controls
 
-        self.panel.add_group_title(
-            Label(parent=self.panel.content, text="Controls")
-        )
+        self.panel.add_group_title(Label(parent=self.panel.content, text="Controls"))
 
         # -------- Added --------
 

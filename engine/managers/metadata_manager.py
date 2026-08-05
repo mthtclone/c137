@@ -42,9 +42,10 @@ class MetadataManager:
     def get_collision(self):
         """Return the collision settings for the currently loaded level."""
         return self._metadata.get("collision", {})
-    def get_dialog(self):
 
-        return self.data.get( "dialog", {})
+    def get_dialog(self):
+        return self.data.get("dialog", {})
+
     def get_spawn(self):
         """Return player spawn settings for the currently loaded level."""
         return self._metadata.get("spawn", {})
