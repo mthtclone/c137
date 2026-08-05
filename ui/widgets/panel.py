@@ -23,12 +23,12 @@ class Panel:
 
         self.cursor_y = 0.6
         self.padding_left = -0.7
-        self.line_height = 0.18
+        self.line_height = 0.13
 
         self.scroll_speed = scroll_speed
         self.scroll_y = 0.0
-        self.min_y = -0.0
-        self.max_y = 0.5
+        self.min_y = -0.1
+        self.max_y = 1.5
 
         self._setup_scroll_input()
 
@@ -39,8 +39,8 @@ class Panel:
 
         self.accept = DirectObject.DirectObject().accept
 
-        self.accept("wheel_up", self._scroll_up)
-        self.accept("wheel_down", self._scroll_down)
+        self.accept("wheel_up", self._scroll_down)
+        self.accept("wheel_down", self._scroll_up)
 
     def _scroll_up(self):
         self.scroll_y += self.scroll_speed
