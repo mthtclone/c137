@@ -28,7 +28,13 @@ class OptionsScreen:
             )
         )
 
-        self.panel.add_group_title(Label(parent=self.panel.content, text="Audio"))
+        # =========================
+        # Audio
+        # =========================
+
+        self.panel.add_group_title(
+            Label(parent=self.panel.content, text="Audio")
+        )
 
         self.panel.add_row(
             Label(parent=self.panel.content, text="Master Volume"),
@@ -40,18 +46,82 @@ class OptionsScreen:
             Slider(parent=self.panel.content),
         )
 
+        # -------- Added --------
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="SFX Volume"),
+            Slider(parent=self.panel.content),
+        )
+
         self.panel.add_spacing(0.5)
 
-        self.panel.add_group_title(Label(parent=self.panel.content, text="Video"))
+        # =========================
+        # Video
+        # =========================
+
+        self.panel.add_group_title(
+            Label(parent=self.panel.content, text="Video")
+        )
 
         self.panel.add_row(
             Label(parent=self.panel.content, text="Fullscreen"),
             Checkbox(parent=self.panel.content),
         )
 
+        # -------- Added --------
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Brightness"),
+            Slider(parent=self.panel.content),
+        )
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="UI Scale"),
+            Slider(parent=self.panel.content),
+        )
+
         self.panel.add_spacing(0.5)
 
-        self.panel.add_group_title(Label(parent=self.panel.content, text="Controls"))
+        # Controls
+
+        self.panel.add_group_title(
+            Label(parent=self.panel.content, text="Controls")
+        )
+
+        # -------- Added --------
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Move Forward"),
+            Label(parent=self.panel.content, text="W"),
+        )
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Move Backward"),
+            Label(parent=self.panel.content, text="S"),
+        )
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Move Left"),
+            Label(parent=self.panel.content, text="A"),
+        )
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Move Right"),
+            Label(parent=self.panel.content, text="D"),
+        )
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Sprint"),
+            Label(parent=self.panel.content, text="Shift"),
+        )
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Interact"),
+            Label(parent=self.panel.content, text="E"),
+        )
+
+        self.panel.add_row(
+            Label(parent=self.panel.content, text="Pause"),
+            Label(parent=self.panel.content, text="Esc"),
+        )
 
         self.panel.add_spacing(1.0)
 
