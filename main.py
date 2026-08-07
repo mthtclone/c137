@@ -50,6 +50,12 @@ class GameApp(ShowBase):
         self.level_manager = None
 
         #
+        # Audio
+        #
+
+        self.audio = AudioManager(self)
+
+        #
         # Show main menu
         #
 
@@ -61,7 +67,8 @@ class GameApp(ShowBase):
 
     def setup_menu(self):
         self.menu = MainMenu(
-            render2d=self.aspect2d,
+            self.aspect2d,
+            self,
             on_new_game=self.on_new_game,
             on_continue=self.on_continue,
             on_exit=self.on_exit,
@@ -167,7 +174,7 @@ class GameApp(ShowBase):
         self.player = Player(
             player_node,
             self.camera,
-            AudioManager(self),
+            self.audio,
             SurfaceDetector(self.level_manager.metadata),
             GroundDetector(self, player_node),
         )

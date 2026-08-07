@@ -8,10 +8,13 @@ class MainMenu(BaseMenu):
     def __init__(
         self,
         render2d,
+        game,
         on_new_game=None,
         on_continue=None,
         on_exit=None,
     ):
+        self.game = game
+
         self.on_new_game = on_new_game
         self.on_continue = on_continue
         self.on_exit = on_exit
@@ -35,7 +38,9 @@ class MainMenu(BaseMenu):
             on_exit=self.show_exit_modal,
         )
 
-        self.options_screen = OptionsScreen(parent=self.root, on_back=self.show_main)
+        self.options_screen = OptionsScreen(
+            parent=self.root, game=self.game, on_back=self.show_main
+        )
 
         self.main_screen.hide()
         self.options_screen.hide()

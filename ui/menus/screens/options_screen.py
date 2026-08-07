@@ -1,3 +1,5 @@
+from panda3d.core import WindowProperties
+
 from ui.widgets.button import Button
 from ui.widgets.checkbox import Checkbox
 from ui.widgets.label import Label
@@ -6,8 +8,9 @@ from ui.widgets.slider import Slider
 
 
 class OptionsScreen:
-    def __init__(self, parent, on_back=None):
+    def __init__(self, parent, game, on_back=None):
         self.parent = parent
+        self.game = game
         self.on_back = on_back
 
         self.widgets = []
@@ -34,20 +37,38 @@ class OptionsScreen:
 
         self.panel.add_group_title(Label(parent=self.panel.content, text="Audio"))
 
+        self.master_volume_slider = Slider(
+            parent=self.panel.content,
+            value=self.game.audio.master_volume,
+            command=self.set_master_volume,
+        )
+
         self.panel.add_row(
             Label(parent=self.panel.content, text="Master Volume"),
-            Slider(parent=self.panel.content),
+            self.master_volume_slider,
+        )
+
+        self.music_volume_slider = Slider(
+            parent=self.panel.content,
+            value=self.game.audio.music_volume,
+            command=self.set_music_volume,
         )
 
         self.panel.add_row(
             Label(parent=self.panel.content, text="Music Volume"),
-            Slider(parent=self.panel.content),
+            self.music_volume_slider,
+        )
+
+        self.sfx_volume_slider = Slider(
+            parent=self.panel.content,
+            value=self.game.audio.sfx_volume,
+            command=self.set_sfx_volume,
         )
 
         # -------- Added --------
         self.panel.add_row(
             Label(parent=self.panel.content, text="SFX Volume"),
-            Slider(parent=self.panel.content),
+            self.sfx_volume_slider,
         )
 
         self.panel.add_spacing(0.5)
@@ -58,20 +79,15 @@ class OptionsScreen:
 
         self.panel.add_group_title(Label(parent=self.panel.content, text="Video"))
 
+        self.fullscreen_checkbox = Checkbox(
+            parent=self.panel.content,
+            checked=self.game.win.getProperties().getFullscreen(),
+            command=self.toggle_fullscreen,
+        )
+
         self.panel.add_row(
             Label(parent=self.panel.content, text="Fullscreen"),
-            Checkbox(parent=self.panel.content),
-        )
-
-        # -------- Added --------
-        self.panel.add_row(
-            Label(parent=self.panel.content, text="Brightness"),
-            Slider(parent=self.panel.content),
-        )
-
-        self.panel.add_row(
-            Label(parent=self.panel.content, text="UI Scale"),
-            Slider(parent=self.panel.content),
+            self.fullscreen_checkbox,
         )
 
         self.panel.add_spacing(0.5)
@@ -147,3 +163,26 @@ class OptionsScreen:
         for w in self.widgets:
             w.destroy()
         self.widgets.clear()
+
+    def toggle_fullscreen(self, enabled):
+        current = self.game.win.getProperties().getFullscreen()
+
+        if current == enabled:
+            return
+
+        props = WindowProperties()
+        props.setFullscreen(enabled)
+
+        if not enabled:
+            props.setSize(1280, 720)
+
+        self.game.win.requestProperties(props)
+
+    def set_master_volume(self, value):
+        self.game.audio.set_master_volume(value)
+
+    def set_music_volume(self, value):
+        self.game.audio.set_music_volume(value)
+
+    def set_sfx_volume(self, value):
+        self.game.audio.set_sfx_volume(value)
