@@ -9,6 +9,7 @@ from panda3d.core import (
     CollisionNode,
     CollisionTraverser,
     DirectionalLight,
+    Fog,
     Vec3,
 )
 
@@ -34,8 +35,9 @@ class GameApp(ShowBase):
         # PBR renderer
         #
 
-        simplepbr.init()
-
+        simplepbr.init(
+            enable_fog=True
+        )
         #
         # Camera
         #
@@ -115,6 +117,7 @@ class GameApp(ShowBase):
         #
 
         self.setup_lighting()
+        self.setup_fog()
 
         #
         # Load level
@@ -314,6 +317,21 @@ class GameApp(ShowBase):
         sun_np.setHpr(45, -60, 0)
 
         self.render.setLight(sun_np)
+
+
+    #
+    #Fog
+    #
+    def setup_fog(self):
+        fog = Fog("scence_fog")
+
+        fog.setColor(0.55, 0.60, 0.55)
+
+        fog.setExpDensity(0.015)
+
+        self.render.setFog(fog)
+
+        print("[MAIN] Fog enabled.")
 
     #
     # DEBUG
