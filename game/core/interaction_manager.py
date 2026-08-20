@@ -7,21 +7,20 @@ from panda3d.core import (
     CollisionTraverser,
 )
 
+from game.core.pickable import Pickable
+
 
 class InteractionManager:
-    """Casts a ray from the camera each frame to find what the player is
-    looking at, and dispatches interact calls to the registered Interactable.
-    """
+    """Finds interactable objects in the camera's line of sight."""
 
-    INTERACT_MASK = BitMask32.bit(1)
+    INTERACT_MASK = BitMask32.bit(2)
 
-    def __init__(self, base, camera, max_distance=3.0, ground_z=0.0):
+    def __init__(self, base, camera, max_distance=3.0):
         self.base = base
         self.camera = camera
         self.max_distance = max_distance
-        self.ground_z = ground_z
         self.current_target = None
-        self.registry = {}  # NodePath -> Interactable
+        self.registry = {}
 
         self.traverser = CollisionTraverser()
         self.queue = CollisionHandlerQueue()
@@ -30,26 +29,11 @@ class InteractionManager:
         ray_node.setFromCollideMask(self.INTERACT_MASK)
         ray_node.setIntoCollideMask(BitMask32.allOff())
 
-        self.ray = CollisionRay()
-        ray_node.addSolid(self.ray)
-
+        ray_node.addSolid(CollisionRay(0, 0, 0, 0, 1, 0))
         self.ray_np = camera.attachNewNode(ray_node)
         self.traverser.addCollider(self.ray_np, self.queue)
 
     def register(self, node, interactable):
-        """
-        `node` is the visible model (a GeomNode) — it has no CollisionSolid
-        of its own, so we attach a CollisionSphere sized to its bounds and
-        register that instead. This is what the ray will actually hit.
-
-        IMPORTANT: node.getBounds() returns the bounds already expressed in
-        the coordinate space of node's *parent* (i.e. it already bakes in
-        node's own position). Since we then attach the CollisionSphere as a
-        CHILD of `node`, using that value here double-applies node's
-        transform and the sphere ends up nowhere near the visible model.
-        We need the bounds in node's own local space instead, which is what
-        getTightBounds(node) gives us.
-        """
         mn, mx = node.getTightBounds(node)
         center = (mn + mx) / 2.0
         radius = max((mx - mn).length() / 2.0, 0.1)
@@ -60,56 +44,48 @@ class InteractionManager:
         col_node.setFromCollideMask(BitMask32.allOff())
 
         col_np = node.attachNewNode(col_node)
-        # col_np.show()  # uncomment to visualize the collision sphere while debugging
-
         self.registry[col_np] = interactable
+        return col_np
 
     def unregister(self, col_np):
         self.registry.pop(col_np, None)
         col_np.removeNode()
 
     def update(self):
-        # ray points straight out from the camera
-        self.ray.setOrigin(0, 0, 0)
-        self.ray.setDirection(0, 1, 0)
-
         self.traverser.traverse(self.base.render)
         self.queue.sortEntries()
+        target = self._find_target()
 
-        new_target = None
+        if target is self.current_target:
+            return
 
-        if self.queue.getNumEntries() > 0:
-            entry = self.queue.getEntry(0)
-            hit_node = entry.getIntoNodePath()
-            distance = entry.getSurfacePoint(self.camera).length()
+        if self.current_target:
+            self.current_target.on_blur()
+        if target:
+            target.on_focus()
+        self.current_target = target
 
-            if distance <= self.max_distance:
-                interactable = self.registry.get(hit_node)
-                if interactable and interactable.can_interact():
-                    new_target = interactable
+    def _find_target(self):
+        for index in range(self.queue.getNumEntries()):
+            entry = self.queue.getEntry(index)
 
-        if new_target is not self.current_target:
-            if self.current_target:
-                self.current_target.on_blur()
-            if new_target:
-                new_target.on_focus()
-            self.current_target = new_target
+            if entry.getSurfacePoint(self.camera).length() > self.max_distance:
+                break
+
+            target = self.registry.get(entry.getIntoNodePath())
+            if target and target.can_interact():
+                return target
+
+        return None
 
     def try_interact(self, player):
-        if self.current_target:
+        if self.current_target and not isinstance(self.current_target, Pickable):
             self.current_target.on_interact(player)
 
-    def update_physics(self, dt):
-        """Advances anything currently falling (dropped Pickables). Uses
-        duck typing so StaticInteractables (which have no update_physics)
-        are simply skipped."""
-        for interactable in self.registry.values():
-            update_fn = getattr(interactable, "update_physics", None)
-            if update_fn:
-                update_fn(dt, self.ground_z)
+    def get_pickable(self):
+        if isinstance(self.current_target, Pickable):
+            return self.current_target
+        return None
 
     def get_prompt(self):
-        """Returns the prompt text for the current target, or None."""
-        if self.current_target:
-            return self.current_target.prompt
-        return None
+        return self.current_target.prompt if self.current_target else None

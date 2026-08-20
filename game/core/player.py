@@ -18,6 +18,8 @@ class Player:
         self.max_slope_normal_z = 0.8
         self.max_step_up = 0.5
         self.ground_snap_distance = 0.35
+        self.interaction_manager = None
+        self.held_item = None
 
         # Footstep system
         self.is_moving = False
@@ -140,4 +142,19 @@ class Player:
     # ---------------- INTERACT ----------------
 
     def interact(self):
-        print("Interact Triggered")
+        if self.interaction_manager:
+            self.interaction_manager.try_interact(self)
+
+    def pickup(self):
+        if self.held_item:
+            self.held_item.drop(self.interaction_manager.base.render)
+            self.held_item = None
+            return
+
+        if not self.interaction_manager:
+            return
+
+        pickable = self.interaction_manager.get_pickable()
+        if pickable:
+            pickable.on_interact(self)
+            self.held_item = pickable

@@ -18,6 +18,9 @@ from game.audio.audio_manager import AudioManager
 from game.collision.ground_detector import GroundDetector
 from game.collision.surface_detector import SurfaceDetector
 from game.controller.player_controller import PlayerController
+from game.core.interactable import Door
+from game.core.interaction_manager import InteractionManager
+from game.core.pickable import Pickable
 from game.core.player import Player
 from game.dialog.dialog_manager import DialogManager
 from game.input.input_state import InputState
@@ -135,6 +138,7 @@ class GameApp(ShowBase):
             #
 
             self.setup_player(spawn)
+            self.setup_interactions()
 
             #
             # Collision
@@ -183,6 +187,22 @@ class GameApp(ShowBase):
         )
 
         print("[MAIN] Camera height set.")
+
+    def setup_interactions(self):
+        manager = InteractionManager(self, self.camera)
+        self.player.interaction_manager = manager
+
+        for node in self.level_manager.current_level.findAllMatches("**"):
+            metadata = self.level_manager.metadata.get_node_metadata(node)
+            if not metadata:
+                continue
+
+            interaction = metadata.get("interaction")
+
+            if interaction == "door":
+                manager.register(node, Door(node))
+            elif interaction == "pickable":
+                manager.register(node, Pickable(node))
 
     #
     # INPUT + DIALOG
@@ -247,6 +267,8 @@ class GameApp(ShowBase):
         self.keyboard_input.update_keys()
 
         dt = globalClock.getDt()
+
+        self.player.interaction_manager.update()
 
         if self.dialog_manager.is_playing():
             self.input_state.reset()
