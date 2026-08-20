@@ -34,3 +34,8 @@ class CrouchCommand(Command):
 class InteractCommand(Command):
     def execute(self, player, dt):
         player.interact()
+
+
+class PickupCommand(Command):
+    def execute(self, player, dt):
+        player.pickup()

@@ -3,6 +3,7 @@ from game.command.player_commands import (
     InteractCommand,
     LookCommand,
     MoveCommand,
+    PickupCommand,
 )
 
 
@@ -62,5 +63,10 @@ class PlayerController:
             commands.append(InteractCommand())
 
             self.state.interact = False
+
+        if self.state.pickup:
+            commands.append(PickupCommand())
+
+            self.state.pickup = False
 
         return commands

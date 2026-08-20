@@ -9,7 +9,7 @@ class InteractableState(Enum):
 
 
 class Interactable:
-    """Base class for anything a player can interact with."""
+    """Base class for objects the player can use."""
 
     def __init__(self, node, prompt="Interact"):
         self.node = node
@@ -17,18 +17,30 @@ class Interactable:
         self.state = InteractableState.IDLE
 
     def can_interact(self):
-        return self.state != InteractableState.DISABLED
+        return self.state is not InteractableState.DISABLED
 
     def on_focus(self):
-        """Called once when the player's look-ray lands on this object."""
-        if self.state == InteractableState.IDLE:
+        if self.state is InteractableState.IDLE:
             self.state = InteractableState.HIGHLIGHTED
 
     def on_blur(self):
-        """Called once when the player looks away."""
-        if self.state == InteractableState.HIGHLIGHTED:
+        if self.state is InteractableState.HIGHLIGHTED:
             self.state = InteractableState.IDLE
 
+    # def on_interact(self, player):
+    #     raise NotImplementedError
+
+
+class Door(Interactable):
+    """A door that toggles between closed and open."""
+
+    def __init__(self, node, open_angle=90):
+        super().__init__(node, "Open")
+        self.closed_heading = node.getH()
+        self.open_angle = open_angle
+        self.is_open = False
+
     def on_interact(self, player):
-        """Subclasses define what actually happens on interact."""
-        raise NotImplementedError
+        self.is_open = not self.is_open
+        self.node.setH(self.closed_heading + (self.open_angle if self.is_open else 0))
+        self.prompt = "Close" if self.is_open else "Open"
