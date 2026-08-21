@@ -67,7 +67,17 @@
 
         "grass_lump": {
             "path": "assets/models/environment/grass_lump.fbx",
-            "scale": [0.01, 0.01, 0.01]
+            "scale": [1, 1, 1]
+        },
+
+        "tree_barrier_short": {
+            "path": "assets/models/environment/tree_barrier_short.glb",
+            "scale": [1, 1, 1]
+        },
+
+        "tree_barrier_group": {
+            "path": "assets/models/environment/tree_barrier_group.glb",
+            "scale": [1, 1, 1]
         }
 
     },
