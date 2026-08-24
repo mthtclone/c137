@@ -11,7 +11,7 @@
     "collision": {
         "mask": 1,
         "node_prefix": "COL_",
-        "debug": false,
+        "debug": true,
         "player_physics": true
     },
 

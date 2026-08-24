@@ -128,6 +128,11 @@ class GameApp(ShowBase):
         if success:
             spawn = self.level_manager.get_spawn_point()
 
+            if spawn:
+                print("[DEBUG SPAWNPOINT]", spawn.getPos(self.render))
+            else:
+                print("[DEBUG SPAWNPOINT] None")
+
             #
             # Player
             #
@@ -165,7 +170,13 @@ class GameApp(ShowBase):
         if spawn is not None:
             spawn_position = spawn.getPos(self.render)
 
-            player_node.setPos(spawn_position + self.level_manager.get_spawn_offset())
+            final_position = spawn_position + self.level_manager.get_spawn_offset()
+
+            print("[DEBUG SPAWN RAW]", spawn_position)
+            print("[DEBUG SPAWN OFFSET]", self.level_manager.get_spawn_offset())
+            print("[DEBUG PLAYER FINAL]", final_position)
+
+            player_node.setPos(final_position)
 
             player_node.setH(spawn.getH(self.render))
 
@@ -179,6 +190,8 @@ class GameApp(ShowBase):
             SurfaceDetector(self.level_manager.metadata),
             GroundDetector(self, player_node),
         )
+
+        print("[DEBUG PLAYER NODE POS]", player_node.getPos(self.render))
 
         print("[MAIN] Camera height set.")
 
@@ -254,8 +267,8 @@ class GameApp(ShowBase):
         for command in self.player_controller.build_commands():
             command.execute(self.player, dt)
 
-        if self.player_physics_enabled:
-            self.player.update_physics(dt)
+        # if self.player_physics_enabled:
+        #      self.player.update_physics(dt)
 
         if self.dialog_trigger:
             self.dialog_trigger.update()
@@ -289,7 +302,7 @@ class GameApp(ShowBase):
 
         self.player_pusher.addCollider(self.player_collision_np, self.player.node)
 
-        self.cTrav.addCollider(self.player_collision_np, self.player_pusher)
+        # self.cTrav.addCollider(self.player_collision_np, self.player_pusher)
 
         print("[MAIN] Player collider created.")
 

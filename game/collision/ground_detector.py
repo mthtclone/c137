@@ -61,7 +61,7 @@ class GroundDetector:
         # Debug
         #
 
-        self.debug = False
+        self.debug = True
 
     def get_ground(self):
         """
@@ -78,33 +78,62 @@ class GroundDetector:
         or None
         """
 
+        if self.debug:
+            print("[GROUND DETECTOR] Checking ground.")
+
+            print(
+                "[GROUND DETECTOR] Ray position:",
+                self.ray_node.getPos(self.base.render),
+            )
+
         self.queue.clearEntries()
 
         self.traverser.traverse(self.base.render)
 
         self.queue.sortEntries()
 
+        if self.debug:
+            print("[GROUND DETECTOR] Hits:", self.queue.getNumEntries())
+
         for index in range(self.queue.getNumEntries()):
             entry = self.queue.getEntry(index)
 
             point = entry.getSurfacePoint(self.base.render)
 
-            distance = self.ray_node.getPos(self.base.render).z - point.z
+            ray_position = self.ray_node.getPos(self.base.render)
+
+            distance = ray_position.z - point.z
+
+            into_node = entry.getIntoNodePath()
+
+            collision_name = self.find_collision_name(into_node)
+
+            if self.debug:
+                print(
+                    "[GROUND HIT]",
+                    index,
+                    "point:",
+                    point,
+                    "distance:",
+                    distance,
+                    "object:",
+                    collision_name,
+                )
 
             if 0 <= distance <= self.max_distance:
-                #
-                # Find the collision object
-                #
+                self.last_surface = collision_name
 
-                into_node = entry.getIntoNodePath()
-
-                self.last_surface = self.find_collision_name(into_node)
+                if self.debug:
+                    print("[GROUND ACCEPTED]", collision_name)
 
                 return (
                     point,
                     entry.getSurfaceNormal(self.base.render),
                     self.last_surface,
                 )
+
+        if self.debug:
+            print("[GROUND DETECTOR] No valid ground.")
 
         return None
 
