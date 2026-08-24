@@ -219,7 +219,7 @@ class LevelManager:
                 collision_mesh.setRenderModeWireframe()
                 collision_mesh.setTwoSided(True)
             else:
-                collision_mesh.hide()
+                collision_mesh.removeNode()
 
             for geom_path in geom_paths:
                 geometry_source_count += 1

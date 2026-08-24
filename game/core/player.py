@@ -58,12 +58,27 @@ class Player:
 
         if ground:
             point, normal, collision_name = ground
+
+            print(
+                "[GROUND DEBUG]",
+                "point:",
+                point,
+                "normal:",
+                normal,
+                "collision:",
+                collision_name,
+            )
+
             ground_z = point.z
             player_z = self.node.getZ()
             distance_to_ground = player_z - ground_z
             walkable = normal.z >= self.max_slope_normal_z
 
             if walkable:
+                print(
+                    "[SNAP]", "player:", player_z, "ground:", ground_z, collision_name
+                )
+
                 can_step_up = distance_to_ground >= -self.max_step_up
                 can_snap_down = distance_to_ground <= self.ground_snap_distance
 

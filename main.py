@@ -264,10 +264,14 @@ class GameApp(ShowBase):
 
             print("[MAIN] Failed to load level.")
 
-            self.loading_screen.set_progress(
-                100,
-                "Failed to load level.",
-            )
+            if spawn:
+                print("[DEBUG SPAWNPOINT]", spawn.getPos(self.render))
+            else:
+                print("[DEBUG SPAWNPOINT] None")
+
+            #
+            # Player
+            #
 
             return
 
@@ -367,14 +371,13 @@ class GameApp(ShowBase):
 
         if spawn is not None:
 
-            spawn_position = spawn.getPos(
-                self.render
-            )
+            final_position = spawn_position + self.level_manager.get_spawn_offset()
 
-            player_node.setPos(
-                spawn_position
-                + self.level_manager.get_spawn_offset()
-            )
+            print("[DEBUG SPAWN RAW]", spawn_position)
+            print("[DEBUG SPAWN OFFSET]", self.level_manager.get_spawn_offset())
+            print("[DEBUG PLAYER FINAL]", final_position)
+
+            player_node.setPos(final_position)
 
             player_node.setH(
                 spawn.getH(self.render)
@@ -400,6 +403,8 @@ class GameApp(ShowBase):
                 player_node,
             ),
         )
+
+        print("[DEBUG PLAYER NODE POS]", player_node.getPos(self.render))
 
         print("[MAIN] Camera height set.")
 
@@ -509,9 +514,8 @@ class GameApp(ShowBase):
                 dt,
             )
 
-        if self.player_physics_enabled:
-
-            self.player.update_physics(dt)
+        # if self.player_physics_enabled:
+        #      self.player.update_physics(dt)
 
         if self.dialog_trigger:
 
@@ -569,10 +573,7 @@ class GameApp(ShowBase):
             self.player.node,
         )
 
-        self.cTrav.addCollider(
-            self.player_collision_np,
-            self.player_pusher,
-        )
+        # self.cTrav.addCollider(self.player_collision_np, self.player_pusher)
 
         print("[MAIN] Player collider created.")
 
