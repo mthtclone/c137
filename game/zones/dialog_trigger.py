@@ -9,8 +9,8 @@ class DialogTrigger:
         self.triggered_planes = set()
 
         self.dialogs = {
-            "COL_Plane1": "DT0",
-            "COL_Road": "DT1",
+            "COL_Dialog1": "DT0",
+            "COL_Dialog2": "DT1",
             "COL_Plane2": "DT2",
             "COL_Plane3": "DTall",
         }

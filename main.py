@@ -1,8 +1,6 @@
 import simplepbr
-
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase.ShowBaseGlobal import globalClock
-
 from panda3d.core import (
     AmbientLight,
     BitMask32,
@@ -16,7 +14,6 @@ from panda3d.core import (
 )
 
 from engine.managers.level_manager import LevelManager
-
 from game.audio.audio_manager import AudioManager
 from game.collision.ground_detector import GroundDetector
 from game.collision.surface_detector import SurfaceDetector
@@ -26,14 +23,12 @@ from game.dialog.dialog_manager import DialogManager
 from game.input.input_state import InputState
 from game.input.keyboard_input import KeyboardInput
 from game.zones.dialog_trigger import DialogTrigger
-
 from ui.dialogs.simple_dialog import SimpleDialog
 from ui.loading_screen import LoadingScreen
 from ui.menus.main_menu import MainMenu
 
 
 class GameApp(ShowBase):
-
     def __init__(self):
         super().__init__()
 
@@ -79,7 +74,6 @@ class GameApp(ShowBase):
     #
 
     def setup_menu(self):
-
         self.menu = MainMenu(
             self.aspect2d,
             self,
@@ -95,7 +89,6 @@ class GameApp(ShowBase):
     #
 
     def on_new_game(self):
-
         print("[MAIN] New game selected.")
 
         #
@@ -129,7 +122,6 @@ class GameApp(ShowBase):
         )
 
     def _start_new_game_loading(self, task):
-
         print("[MAIN] Starting game load...")
 
         self.start_game()
@@ -143,7 +135,6 @@ class GameApp(ShowBase):
     #
 
     def on_continue(self):
-
         print("[MAIN] Continue selected.")
 
         # TODO:
@@ -176,7 +167,6 @@ class GameApp(ShowBase):
         )
 
     def _start_continue_loading(self, task):
-
         self.start_game()
 
         return task.done
@@ -186,7 +176,6 @@ class GameApp(ShowBase):
     #
 
     def on_exit(self):
-
         print("[MAIN] Exit selected.")
 
         if self.menu:
@@ -200,7 +189,6 @@ class GameApp(ShowBase):
     #
 
     def start_game(self):
-
         #
         # 0% - PREPARING
         #
@@ -252,26 +240,19 @@ class GameApp(ShowBase):
             "Loading environment...",
         )
 
-        success = self.level_manager.load_level(
-            "levels/test_level"
-        )
+        success = self.level_manager.load_level("levels/test_level")
 
         #
         # CHECK LEVEL
         #
 
         if not success:
-
             print("[MAIN] Failed to load level.")
 
-            if spawn:
-                print("[DEBUG SPAWNPOINT]", spawn.getPos(self.render))
-            else:
-                print("[DEBUG SPAWNPOINT] None")
-
-            #
-            # Player
-            #
+            self.loading_screen.set_progress(
+                100,
+                "Failed to load level.",
+            )
 
             return
 
@@ -320,37 +301,36 @@ class GameApp(ShowBase):
         self.setup_player_controls()
 
         self.loading_screen.set_progress(
-    95,
-    "Finalizing...",
-)
+            95,
+            "Finalizing...",
+        )
 
         self.debug_model()
 
-#
-# 100% - COMPLETE
-#
+        #
+        # 100% - COMPLETE
+        #
 
         self.loading_screen.set_progress(
-    100,
-    "Ready",
-)
+            100,
+            "Ready",
+        )
 
         print()
         print("[MAIN] Level loaded successfully.")
 
-#
-# Keep the loading screen visible.
-# Schedule gameplay to appear AFTER 100% has been rendered.
-#
+        #
+        # Keep the loading screen visible.
+        # Schedule gameplay to appear AFTER 100% has been rendered.
+        #
 
         self.taskMgr.doMethodLater(
-    0.5,
-        self._show_gameplay,
-    "showGameplay",
-)
+            0.5,
+            self._show_gameplay,
+            "showGameplay",
+        )
 
     def _show_gameplay(self, task):
-
         print("[MAIN] 100% reached.")
         print("[MAIN] Starting gameplay.")
 
@@ -364,27 +344,16 @@ class GameApp(ShowBase):
     #
 
     def setup_player(self, spawn):
-
-        player_node = self.render.attachNewNode(
-            "Player"
-        )
+        player_node = self.render.attachNewNode("Player")
 
         if spawn is not None:
+            spawn_position = spawn.getPos(self.render)
 
-            final_position = spawn_position + self.level_manager.get_spawn_offset()
+            player_node.setPos(spawn_position + self.level_manager.get_spawn_offset())
 
-            print("[DEBUG SPAWN RAW]", spawn_position)
-            print("[DEBUG SPAWN OFFSET]", self.level_manager.get_spawn_offset())
-            print("[DEBUG PLAYER FINAL]", final_position)
-
-            player_node.setPos(final_position)
-
-            player_node.setH(
-                spawn.getH(self.render)
-            )
+            player_node.setH(spawn.getH(self.render))
 
         else:
-
             player_node.setPos(
                 0,
                 -20,
@@ -395,16 +364,12 @@ class GameApp(ShowBase):
             player_node,
             self.camera,
             self.audio,
-            SurfaceDetector(
-                self.level_manager.metadata
-            ),
+            SurfaceDetector(self.level_manager.metadata),
             GroundDetector(
                 self,
                 player_node,
             ),
         )
-
-        print("[DEBUG PLAYER NODE POS]", player_node.getPos(self.render))
 
         print("[MAIN] Camera height set.")
 
@@ -413,10 +378,7 @@ class GameApp(ShowBase):
     #
 
     def setup_player_controls(self):
-
-        dialog_settings = (
-            self.level_manager.metadata.get_dialog()
-        )
+        dialog_settings = self.level_manager.metadata.get_dialog()
 
         self.dialog_enabled = dialog_settings.get(
             "enabled",
@@ -440,9 +402,7 @@ class GameApp(ShowBase):
 
         self.dialog_ui = SimpleDialog()
 
-        self.dialog_manager = DialogManager(
-            self.dialog_ui
-        )
+        self.dialog_manager = DialogManager(self.dialog_ui)
 
         self.accept(
             "enter",
@@ -450,7 +410,6 @@ class GameApp(ShowBase):
         )
 
         if self.dialog_enabled:
-
             self.dialog_trigger = DialogTrigger(
                 self.player,
                 self.dialog_manager,
@@ -460,7 +419,6 @@ class GameApp(ShowBase):
             print("[MAIN] Dialog enabled.")
 
         else:
-
             self.dialog_trigger = None
 
             print("[MAIN] Dialog disabled.")
@@ -469,21 +427,15 @@ class GameApp(ShowBase):
         # Controller
         #
 
-        self.player_controller = PlayerController(
-            self.input_state
-        )
+        self.player_controller = PlayerController(self.input_state)
 
         #
         # Physics
         #
 
-        self.player_physics_enabled = (
-            self.level_manager.metadata
-            .get_collision()
-            .get(
-                "player_physics",
-                True,
-            )
+        self.player_physics_enabled = self.level_manager.metadata.get_collision().get(
+            "player_physics",
+            True,
         )
 
         self.taskMgr.add(
@@ -496,29 +448,26 @@ class GameApp(ShowBase):
     #
 
     def update_player(self, task):
-
         self.keyboard_input.update_keys()
 
         dt = globalClock.getDt()
 
         if self.dialog_manager.is_playing():
-
             self.input_state.reset()
 
             return task.cont
 
         for command in self.player_controller.build_commands():
-
             command.execute(
                 self.player,
                 dt,
             )
 
         # if self.player_physics_enabled:
-        #      self.player.update_physics(dt)
+
+        #     self.player.update_physics(dt)
 
         if self.dialog_trigger:
-
             self.dialog_trigger.update()
 
         self.input_state.reset()
@@ -530,14 +479,11 @@ class GameApp(ShowBase):
     #
 
     def setup_player_collision(self):
-
         print("[MAIN] Creating player collider.")
 
         self.cTrav = CollisionTraverser()
 
-        player_node = CollisionNode(
-            "Player"
-        )
+        player_node = CollisionNode("Player")
 
         player_node.addSolid(
             CollisionBox(
@@ -548,32 +494,25 @@ class GameApp(ShowBase):
             )
         )
 
-        player_node.setFromCollideMask(
-            BitMask32.bit(1)
-        )
+        player_node.setFromCollideMask(BitMask32.bit(1))
 
-        player_node.setIntoCollideMask(
-            BitMask32.allOff()
-        )
+        player_node.setIntoCollideMask(BitMask32.allOff())
 
-        self.player_collision_np = (
-            self.player.node.attachNewNode(
-                player_node
-            )
-        )
+        self.player_collision_np = self.player.node.attachNewNode(player_node)
 
         self.player_collision_np.show()
 
-        self.player_pusher = (
-            CollisionHandlerPusher()
-        )
+        self.player_pusher = CollisionHandlerPusher()
 
         self.player_pusher.addCollider(
             self.player_collision_np,
             self.player.node,
         )
 
-        # self.cTrav.addCollider(self.player_collision_np, self.player_pusher)
+        self.cTrav.addCollider(
+            self.player_collision_np,
+            self.player_pusher,
+        )
 
         print("[MAIN] Player collider created.")
 
@@ -582,10 +521,7 @@ class GameApp(ShowBase):
     #
 
     def setup_lighting(self):
-
-        ambient = AmbientLight(
-            "ambient"
-        )
+        ambient = AmbientLight("ambient")
 
         ambient.setColor(
             (
@@ -596,17 +532,11 @@ class GameApp(ShowBase):
             )
         )
 
-        ambient_np = self.render.attachNewNode(
-            ambient
-        )
+        ambient_np = self.render.attachNewNode(ambient)
 
-        self.render.setLight(
-            ambient_np
-        )
+        self.render.setLight(ambient_np)
 
-        sun = DirectionalLight(
-            "sun"
-        )
+        sun = DirectionalLight("sun")
 
         sun.setColor(
             (
@@ -617,9 +547,7 @@ class GameApp(ShowBase):
             )
         )
 
-        sun_np = self.render.attachNewNode(
-            sun
-        )
+        sun_np = self.render.attachNewNode(sun)
 
         sun_np.setHpr(
             45,
@@ -627,19 +555,14 @@ class GameApp(ShowBase):
             0,
         )
 
-        self.render.setLight(
-            sun_np
-        )
+        self.render.setLight(sun_np)
 
     #
     # FOG
     #
 
     def setup_fog(self):
-
-        fog = Fog(
-            "scence_fog"
-        )
+        fog = Fog("scence_fog")
 
         fog.setColor(
             0.55,
@@ -647,13 +570,9 @@ class GameApp(ShowBase):
             0.55,
         )
 
-        fog.setExpDensity(
-            0.015
-        )
+        fog.setExpDensity(0.015)
 
-        self.render.setFog(
-            fog
-        )
+        self.render.setFog(fog)
 
         print("[MAIN] Fog enabled.")
 
@@ -662,15 +581,12 @@ class GameApp(ShowBase):
     #
 
     def debug_model(self):
-
         model = self.level_manager.current_level
 
         if model is None:
             return
 
-        print(
-            "========== MODEL DEBUG =========="
-        )
+        print("========== MODEL DEBUG ==========")
 
         print(model)
 
@@ -680,7 +596,6 @@ class GameApp(ShowBase):
 
 
 if __name__ == "__main__":
-
     app = GameApp()
 
     app.run()

@@ -91,14 +91,14 @@
 
     "dialog": {
 
-        "enabled": false
+        "enabled": true
 
     },
 
 
     "zones": {
 
-        "COL_Plane1": {
+        "COL_Dialog1": {
 
             "type": "dialog",
 
