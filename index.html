@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>December 16 — an atmospheric walking simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dusk: #171f1a;
+    --dusk-deep: #0f1512;
+    --fog: #cfd6c8;
+    --paper: #e9e4d6;
+    --moss: #5c7263;
+    --rust: #a9714f;
+    --ash: #8b9289;
+    --line: rgba(207, 214, 200, 0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin: 0;
+    background: var(--dusk);
+    color: var(--fog);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: inherit; }
+
+  ::selection{ background: var(--rust); color: var(--dusk-deep); }
+
+  :focus-visible{
+    outline: 2px solid var(--rust);
+    outline-offset: 3px;
+  }
+
+  .wrap{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .prose{
+    max-width: 640px;
+  }
+
+  header.nav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 32px;
+    mix-blend-mode: difference;
+  }
+  .nav-mark{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+  }
+  .nav-link{
+    text-decoration: none;
+    font-size: 0.92rem;
+    color: var(--fog);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  .nav-link:hover{ border-color: var(--fog); }
+
+  .hero{
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 45% at 25% 20%, rgba(92,114,99,0.35), transparent 70%),
+      radial-gradient(ellipse 70% 50% at 80% 70%, rgba(169,113,79,0.16), transparent 70%),
+      linear-gradient(180deg, var(--dusk-deep) 0%, var(--dusk) 55%, #1b241d 100%);
+  }
+
+  .fog-layer{
+    position: absolute;
+    inset: -10%;
+    pointer-events: none;
+    filter: blur(50px);
+    opacity: 0.55;
+  }
+
+  @keyframes drift1{
+    0%,100%{ transform: translate(0,0); }
+    50%{ transform: translate(4%, 6%); }
+  }
+  @keyframes drift2{
+    0%,100%{ transform: translate(0,0); }
+    50%{ transform: translate(-5%, -4%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .fog-blob{ animation: none; }
+  }
+
+  .hero-inner{
+    position: relative;
+    z-index: 1;
+    padding: 0 32px 88px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .hero-eyebrow{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ash);
+    margin: 0 0 22px;
+  }
+
+  h1.title{
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(3.6rem, 11vw, 8.5rem);
+    line-height: 0.95;
+    margin: 0 0 20px;
+    color: var(--paper);
+  }
+
+  .hero-sub{
+    max-width: 480px;
+    font-size: 1.15rem;
+    color: var(--fog);
+    margin: 0 0 40px;
+  }
+
+  .cta-row{
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .btn{
+    display: inline-block;
+    padding: 13px 24px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    border-radius: 2px;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .btn-primary{
+    background: var(--rust);
+    color: var(--dusk-deep);
+  }
+  .btn-primary:hover{ background: #bd8362; }
+  .btn-secondary{
+    border: 1px solid var(--line);
+    color: var(--fog);
+  }
+  .btn-secondary:hover{ border-color: var(--fog); }
+
+  section{
+    padding: 120px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  h2.section-title{
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    margin: 0 0 28px;
+    color: var(--paper);
+  }
+
+  p{ color: var(--fog); }
+  .muted{ color: var(--ash); }
+
+  .premise{
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .premise-visual{
+    background-color: var(--dusk-deep);
+    min-height: 340px;
+    border: 1px solid var(--line);
+  }
+
+  .log{
+    border-top: 1px solid var(--line);
+  }
+  .log-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .log-item{
+    background: var(--dusk);
+    padding: 30px 32px;
+  }
+  .log-key{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--ash);
+    margin: 0 0 8px;
+  }
+  .log-val{
+    font-size: 1.15rem;
+    color: var(--paper);
+    margin: 0;
+  }
+
+  .build-grid{
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .steps{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+  }
+  .steps li{
+    counter-increment: step;
+    position: relative;
+    padding: 0 0 22px 40px;
+    border-left: 1px solid var(--line);
+    margin-left: 10px;
+  }
+  .steps li:last-child{ padding-bottom: 0; }
+  .steps li::before{
+    content: counter(step);
+    position: absolute;
+    left: -11px;
+    top: -2px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--dusk);
+    border: 1px solid var(--moss);
+    color: var(--fog);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  code.cmd{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.88rem;
+    background: rgba(207,214,200,0.06);
+    padding: 2px 7px;
+    border-radius: 2px;
+    color: var(--paper);
+  }
+
+  .terminal{
+    border: 1px solid var(--line);
+    background: var(--dusk-deep);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    padding: 24px 26px;
+    color: var(--fog);
+  }
+  .terminal .l{ margin: 0 0 10px; }
+  .terminal .l:last-child{ margin-bottom: 0; }
+  .terminal .prompt{ color: var(--moss); }
+  .terminal .comment{ color: var(--ash); }
+
+  footer{
+    padding: 70px 0 50px;
+    border-top: 1px solid var(--line);
+  }
+  .footer-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-links{
+    display: flex;
+    gap: 26px;
+    flex-wrap: wrap;
+  }
+  .footer-links a{
+    text-decoration: none;
+    font-size: 0.92rem;
+    color: var(--fog);
+    border-bottom: 1px solid var(--line);
+  }
+  .footer-links a:hover{ border-color: var(--fog); }
+  .footer-mark{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--paper);
+  }
+  .footer-fine{
+    font-size: 0.82rem;
+    color: var(--ash);
+    margin-top: 30px;
+  }
+
+  @media (max-width: 780px){
+    .premise, .build-grid{ grid-template-columns: 1fr; gap: 40px; }
+    .log-grid{ grid-template-columns: 1fr; }
+    section{ padding: 80px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="nav-link" href="https://github.com/mthtclone/c137" target="_blank" rel="noopener">Repository ↗</a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="title">December 16</h1>
+    <p class="hero-sub">A short atmospheric walking simulator game</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/mthtclone/c137" target="_blank" rel="noopener">View the repository</a>
+      <a class="btn btn-secondary" href="#premise">Read the field notes</a>
+    </div>
+  </div>
+</section>
+
+<section id="premise">
+  <div class="wrap premise">
+    <div>
+      <h2 class="section-title">What it is</h2>
+      <p class="prose">This project aims to develop a short atmospheric walking simulator with an estimated playtime of 20–30 minutes.</p>
+      <p class="prose">The project is early: a custom engine layer, a first test level, and a growing set of environment assets.</p>
+    </div>
+    <div class="premise-visual">
+      <ul>
+        <li>
+            <a href="https://github.com/mthtclone/c137/wiki/Design-Document" target="_blank">Design Document</a>
+        </li>
+
+        <li>
+            <a href="https://github.com/mthtclone/c137/wiki/Flowcharts-and-Assets-List" target="_blank">Flowcharts and Assets List</a>
+        </li>
+
+        <li>
+            <a href="https://github.com/mthtclone/c137/wiki/Level-Metadata-Subsystem" target="_blank">Level Metadata Subsystem</a>
+        </li>
+
+        <li>
+            <a href="https://github.com/mthtclone/c137/wiki/Alpha" target="_blank">Alpha</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="log">
+  <div class="wrap">
+    <h2 class="section-title">Field notes</h2>
+  </div>
+  <div class="wrap" style="padding-top: 8px;">
+    <div class="log-grid">
+      <div class="log-item">
+        <p class="log-key">playtime</p>
+        <p class="log-val">20 – 30 minutes</p>
+      </div>
+      <div class="log-item">
+        <p class="log-key">status</p>
+        <p class="log-val">In development — first test level</p>
+      </div>
+      <div class="log-item">
+        <p class="log-key">built with</p>
+        <p class="log-val">Python, custom engine</p>
+      </div>
+      <div class="log-item">
+        <p class="log-key">structure</p>
+        <p class="log-val">engine / game / levels / tools / ui</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap build-grid">
+    <div>
+      <h2 class="section-title">Running it locally</h2>
+      <ol class="steps">
+        <li><p class="prose" style="margin:0;">Create and activate a virtual environment with <code class="cmd">venv</code>.</p></li>
+        <li><p class="prose" style="margin:0;">Install dependencies from <code class="cmd">requirements.txt</code>.</p></li>
+        <li><p class="prose" style="margin:0;">Install the pre-commit hooks.</p></li>
+        <li><p class="prose" style="margin:0;">Use the project <code class="cmd">Makefile</code> to run, lint, and format.</p></li>
+      </ol>
+    </div>
+    <div class="terminal">
+      <p class="l"><span class="prompt">$</span> python -m venv venv</p>
+      <p class="l"><span class="prompt">$</span> source venv/Script/activate</p>
+      <p class="l"><span class="prompt">$</span> pip install -r requirements.txt</p>
+      <p class="l"><span class="prompt">$</span> pre-commit install</p>
+      <p class="l comment"># then, day to day</p>
+      <p class="l"><span class="prompt">$</span> make run <span class="comment">// start the game</span></p>
+      <p class="l"><span class="prompt">$</span> make lint <span class="comment">// ruff checks</span></p>
+      <p class="l"><span class="prompt">$</span> make format <span class="comment">// black formatter</span></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-row">
+      <div class="footer-links">
+        <a href="https://github.com/mthtclone/c137" target="_blank" rel="noopener">Repository</a>
+        <a href="https://github.com/mthtclone/c137/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/mthtclone/c137/forks" target="_blank" rel="noopener">Forks</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
