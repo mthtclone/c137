@@ -10,15 +10,36 @@ setup(
                 "CopenhagentTrip": "main.py",
             },
             # 2. Add all your asset extensions and folders here
+            #
+            # NOTE: .glb / .gltf are intentionally NOT included here.
+            # panda3d-gltf registers itself with Panda3D via a Python
+            # entry point, and that registration does not survive
+            # freezing into a standalone .exe (importlib.metadata sees
+            # no installed-package metadata inside a frozen build), so
+            # any .glb/.gltf shipped as-is will fail to load at runtime
+            # even though they load fine when run from source.
+            #
+            # Run `python tools/convert_assets_to_bam.py` before packaging
+            # to convert every .glb/.gltf under levels/ and assets/ into
+            # .bam (which Panda3D reads natively, no plugin required) and
+            # to rewrite level_metadata.json asset paths to match. Only
+            # the resulting .bam files need to ship with the build.
             "include_patterns": [
                 "**/*.png",
-                "**/*.*",
                 "**/*.jpg",
                 "**/*.egg",
                 "**/*.bam",
+                "**/*.json",
+                "**/*.txt",
+            ],
+            # Never bundle the source glTF/GLB files into the frozen
+            # build — they cannot be loaded there (see note above).
+            # Keep them for local development / re-exporting only.
+            "exclude_patterns": [
+                "**/*.glb",
                 "**/*.gltf",
                 "**/*.gltf.rpc",
-                "**/*.txt",
+                "**/*.fbx",
             ],
             # 3. List the internal Panda3D plugins you require
             "plugins": [
@@ -28,8 +49,6 @@ setup(
             # 4. List your third-party pip packages here
             "platforms": ["win_amd64"],  # Builds for 64-bit Windows
             "include_modules": [
-                "gltf",
-                "simplepbr" "black",
                 "certifi",
                 "cfgv",
                 "charset-normalizer",
@@ -44,77 +63,25 @@ setup(
                 "numpy",
                 "packaging",
                 "Panda3D",
-                "panda3d-blend2bam",
-                "panda3d-gltf",
                 "panda3d-simplepbr",
                 "pathspec",
                 "pillow",
                 "platformdirs",
-                "pre_commit",
                 "pyquaternion",
                 "python-discovery",
                 "pytokens",
                 "PyYAML",
                 "requests",
-                "ruff",
                 "setuptools",
+                "simplepbr",
                 "typing_extensions",
                 "urllib3",
                 "virtualenv",
+                # panda3d-gltf / panda3d-blend2bam / ruff / black / pre_commit
+                # are build-time-only tools (asset conversion + dev
+                # tooling). They are deliberately NOT frozen into the
+                # runtime app.
             ],
         }
     },
 )
-
-# from setuptools import setup, find_packages
-
-
-# setup(
-#     name="CopenhagenTrip",
-#     version="0.1.0",
-
-#     packages=find_packages(),
-#     py_modules=["main"],
-
-#     options={
-#         "build_apps": {
-
-#             "console_apps": {
-#                 "CopenhagenTrip": "main.py"
-#             },
-
-#             "platforms": [
-#                 "win32"
-#             ],
-
-#             "include_patterns": [
-#                 "assets/**",
-#                 "game/assets/**",
-#                 "levels/**"
-#             ],
-
-#             "plugins": [
-#                 "pandagl",
-#                 "p3openal"
-#             ],
-
-#             "include_modules": [
-#                 "gltf",
-#                 "simplepbr"
-#             ],
-
-#             "exclude_patterns": [
-#                 "**/__pycache__/**",
-#                 "**/*.pyc"
-#             ]
-#         }
-#     },
-
-#     install_requires=[
-#         "Panda3D",
-#         "panda3d-gltf",
-#         "panda3d-simplepbr"
-#     ]
-# )
-
-# Code archived as artifact

@@ -3,126 +3,103 @@
         "name": "Test Level",
         "version": 1
     },
-
     "spawn": {
-        "offset": [0, 0, 0]
+        "offset": [
+            0,
+            0,
+            0
+        ]
     },
-
     "collision": {
         "mask": 1,
         "node_prefix": "COL_",
         "debug": true,
         "player_physics": true
     },
-
-
     "collision_surfaces": {
-
         "COL_Plane1": {
             "surface": "grass"
         },
-
         "COL_Road": {
             "surface": "stone"
         },
-
         "COL_Car5": {
             "surface": "metal"
         }
-
     },
-
-
     "surface_types": {
-
         "grass": {
             "footstep_sound": "grass",
             "footstep_volume": 0.6
         },
-
         "stone": {
             "footstep_sound": "stone",
             "footstep_volume": 0.8
         },
-
         "metal": {
             "footstep_sound": "metal",
             "footstep_volume": 1.0
         }
-
     },
-
-
     "assets": {
-
         "tree_oak": {
-            "path": "assets/models/environment/tree_oak.glb",
-            "scale": [0.5, 0.5, 0.5]
+            "path": "assets/models/environment/tree_oak.bam",
+            "scale": [
+                0.5,
+                0.5,
+                0.5
+            ]
         },
-
         "in_tree": {
-            "path": "assets/models/environment/in_tree.glb",
-            "scale": [1, 1, 1]
+            "path": "assets/models/environment/in_tree.bam",
+            "scale": [
+                1,
+                1,
+                1
+            ]
         },
-
         "grass_lump": {
             "path": "assets/models/environment/grass_lump.fbx",
-            "scale": [1, 1, 1]
+            "scale": [
+                1,
+                1,
+                1
+            ]
         },
-
         "tree_barrier_short": {
-            "path": "assets/models/environment/tree_barrier_short.glb",
-            "scale": [1, 1, 1]
+            "path": "assets/models/environment/tree_barrier_short.bam",
+            "scale": [
+                1,
+                1,
+                1
+            ]
         },
-
         "tree_barrier_group": {
-            "path": "assets/models/environment/tree_barrier_group.glb",
-            "scale": [1, 1, 1]
+            "path": "assets/models/environment/tree_barrier_group.bam",
+            "scale": [
+                1,
+                1,
+                1
+            ]
         }
-
     },
-
-
     "object_types": {},
-
-
     "objects": {},
-
-
     "dialog": {
-
         "enabled": true
-
     },
-
-
     "zones": {
-
         "COL_Dialog1": {
-
             "type": "dialog",
-
             "dialog": "DT0"
-
         },
-
-
         "COL_Plane2": {
-
             "type": "dialog",
-
             "dialog": "DT1"
-
         },
-
-
         "COL_Road": {
-
             "type": "dialog",
-
             "dialog": "DT2"
-
         }
-
     }
 }
