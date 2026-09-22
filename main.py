@@ -463,9 +463,8 @@ class GameApp(ShowBase):
                 dt,
             )
 
-        # if self.player_physics_enabled:
-
-        #     self.player.update_physics(dt)
+        if self.player_physics_enabled:
+            self.player.update_physics(dt)
 
         if self.dialog_trigger:
             self.dialog_trigger.update()
