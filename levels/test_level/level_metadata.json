@@ -17,7 +17,10 @@
         "player_physics": true
     },
     "collision_surfaces": {
-        "COL_Plane1": {
+        "COL_Dialog1": {
+            "surface": "grass"
+        },
+        "COL_Slope": {
             "surface": "grass"
         },
         "COL_Road": {
@@ -93,7 +96,7 @@
             "type": "dialog",
             "dialog": "DT0"
         },
-        "COL_Plane2": {
+        "COL_Slope": {
             "type": "dialog",
             "dialog": "DT1"
         },
