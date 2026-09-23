@@ -13,7 +13,7 @@
     "collision": {
         "mask": 1,
         "node_prefix": "COL_",
-        "debug": true,
+        "debug": false,
         "player_physics": true
     },
     "collision_surfaces": {
